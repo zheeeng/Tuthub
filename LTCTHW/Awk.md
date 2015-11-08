@@ -8,4 +8,4 @@ Wait no more, we start it from the standard awk execution structure:
 
 	awk 'pattern{actions}pattern{actions}...' file
 	
-One pattern and a series of actions consist one rule. For input text, content is separated into records by specified separator(default separator is line break character). Each record is matched against pattern of rules one by one. Pattern match actions perform. For more details, some examples will explain later.
+Elemental unit of _Awk_ is a rule which consist of one pattern and a series of actions. For input text, content is separated into records by specified separator(default separator is line break character). Each record is matched against pattern of rules one by one. Pattern matched actions perform. For more details, some examples will explain them later.
