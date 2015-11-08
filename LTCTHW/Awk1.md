@@ -82,13 +82,13 @@ x++ (unary)		| Post-increment	| 3			| ← right
 \>=				| Not-less-than sign		| 9 | left →
 <=				| Not-greater-than sign		| 9 | left →
 **> (following a command)**	| File write redirection  | 9 | left →
-**>> (following a command)**	| File append redirection | 9 | left →
-**\| (following a command)**	| Program redirection     | 9 | left →
+**>> (following a command)** | File append redirection | 9 | left →
+**<span>&#124</span> (following a command)**	| Program redirection     | 9 | left →
 **~**			| Regular-match sign	| 10	| left →
 **!~**			| Regular-unmatch sign	| 10	| left →
 **in**			| Array membership	| 11		| iteration
 && 				| Logical "and"		| 12		| left →
-\|\|			| Logical "or"		| 13		| left →
+<span>&#124;&#124;</span> | Logical "or" | 13	| left →
 ? : (ternary)	| Conditional expression | 14	| left →
 =				| Assignment		| 15		| ← right
 +=,-=,\*=,/=,%=,**^=,\*\*=** | Self compute & Assignment | 15 | ← right
@@ -110,7 +110,7 @@ We have known built-in variables `$0` and `$1 ~ $n`. In our case above some spec
 Built-in Variables	|Meaning 
 :-----------------:	|:-----------------:
 **$0**				| Entire record
-**$n**				| The nth record filed
+**$n**				| The nth record field
 FS 					| Field separator, default: `space` or `tab` 
 RS					| Record separator, default: `line break -- \n`
 OFS					| Output field separator, default: `":"`
@@ -140,7 +140,7 @@ Actions set is required to be wrapped by curly braces, and consisted of series s
 	SET output record separator `ORS` to " !;\n"
 	SET variable `mode` to "normal"
 	SET variable `line_count` to 0
-	PRINT process starting prompt with filename --`ARGV[1]`, `ARGV[2]` and number files `ARGC`
+	PRINT process starting prompt with filename --`ARGV[1]`, `ARGV[2]` and number of files -- `ARGC` - 1
 	// Pattern matching
 	IF `mode` equal "normal":
 		IF record match regular expression `/^_?[t-z]+/` and the numeric user id(`$3`) is even:
