@@ -1,6 +1,6 @@
 ## EXAMPLE 1
 
-Consider the _Awk_ structure, let me say some shallow features extraction from an example:
+Considering the _Awk_ structure, let me say some shallow features extraction from an example:
 
 ```
 # awk -F ':' ' \
@@ -22,7 +22,7 @@ Consider the _Awk_ structure, let me say some shallow features extraction from a
 ' /etc/passwd /etc/shadow
 ```
 
-In the end of the command, input could be a text file or pipeline textual stream. Here input is specified as file `/etc/passwd` and `/etc/shadow`, some gists about this file here:
+In the end of the command, input could be a text file or pipe textual stream. Here input is specified as file `/etc/passwd` and `/etc/shadow`, some gists about this file here:
 
 1. File `/etc/passwd` is text file storing user account information. Each record of it looks like `root:*:0:0:System Administrator:/var/root:/bin/sh`
 2. For `/etc/passwd`, each field is separated with `":"`, and are as follows:
@@ -112,7 +112,7 @@ Built-in Variables	|Meaning
 **$0**				| Entire record
 **$n**				| The nth record field
 FS 					| Field separator, default: `space` or `tab` 
-RS					| Record separator, default: `line break -- \n`
+RS					| Input record separator, default: `line break -- \n`
 OFS					| Output field separator, default: `":"`
 ORS					| Output record separator, default: `line break`
 CONVFMT				| A string that controls the conversion of numbers to strings, the default value is %.6g
@@ -152,7 +152,21 @@ Actions set is required to be wrapped by curly braces, and consisted of series s
 	// Cleanup actions
 	PRINT process completion prompt with total number of records and fields
 			
-In the `printf statement`, (1) Program employ ARGV[1] which refers to the first input file's name -- "/etc/passwd", and ARGV[2] which refers to "/etc/shadow"( Meanwhile, ARGV[0] refers to program's name -- "awk", easy to know, ARGV[n] refers to the nth input file) cos `FILENAME` is unavailable in `BEGIN patten`; (2) Add "\n" manually at the end of `printf statement` for line break is necessary(`print` insert line break character at the end of statement automatically) **(Note: printf produce output strictly follow formatting structure & print produce output with line break)**. Actually `print` and `printf` have many difference with each other, we simply conclude `print` is a fancy, handy and no strictly formatting requirement replacement of `printf`.
+In the `printf statement`, two points should be mentioned:
+
+1. Program employ ARGV[1] which refers to the first argument of file input fileds -- "/etc/passwd", and ARGV[2] which refers to the second argument -- "/etc/shadow"( Meanwhile, ARGV[0] refers to program's name -- "awk", easy to know, ARGV[n] refers to the nth argument) cos `FILENAME` is unavailable in `BEGIN patten`. Alternative choice is declaring a variable through command option `"-v"`:
+
+		awk -v filename1=/etc/passwd -v filename2=/etc/shadow 'program-code' /etc/passwd /etc/shadow
+
+	**(Note: -v option can only set one variable, but it can be used more than once)**
+
+2. The file input fields receive filename and assignment:
+
+		awk 'program' filename1 var=1 filename2 
+
+	Assigning value to variable like above is functionally similar with using command option `-v`, but it occurs when _Awk_ start processing the assignment.
+
+3. Add "\n" manually at the end of `printf statement` for line break is necessary(`print` insert line break character at the end of statement automatically) **(Note: printf produce output strictly follow formatting structure & print produce output with line break)**. Actually `print` and `printf` have many difference with each other, we simply conclude `print` is a fancy, handy and no strictly formatting requirement replacement of `printf`.
 
 Another thing should be noted: Variable `field_count` is called without any declaration, with program working fine, it is easy to speculate `field_count` is assigned with initial value 0 while its first calling **(Note: non-declaration value is auto initialized as 0 while first calling)**.
 
