@@ -1,12 +1,12 @@
 ## EXAMPLE 1
 
-Considering the _Awk_ structure, let me say some shallow features extraction from an example:
+Considering the _AWK_ structure, let me say some shallow features extraction from an example:
 
 ```
 # awk -F ':' ' \
 	BEGIN { \
 		RS = "\n"; OFS = "-> "; ORS = " !;\n"; mode = "normal"; line_count = 0; \
-		printf "\nTerminal: " ENVIRON["SHELL"] "\n"; \
+		printf "\nShell: " ENVIRON["SHELL"] "\n"; \
 		printf "Count from files " ARGV[1] " and " ARGV[2] "(total " ARGC-1 " files)\n"; \
 		printf "[Count Test Start]\n"; \
 	} \
@@ -45,17 +45,17 @@ In the end of the command, input could be a text file or pipe textual stream. He
 	8. Days after which account be disabled(count since 1/1/1970)
 	9. Reserved field for possible future use
 
-Print specified fields filtered out by some patterns and a simple statistics are our goals in this example.
+Print the specific fields filtered out by some patterns and a simple statistics are our goals in this example.
 
 ### PATTERNS:
 
-Each record of `/etc/passwd` or `/etc/shadow` matches against the specified patterns, if the value of pattern matching expression is nonzero or non-null string, namely the equivalent of boolean true in _Awk_, the followed actions will execute on this record **(Note: Processing -- Actions execute on pattern matched records )**. In _Awk_, either of pattern and actions (but not both) may be omitted. Omitted pattern match all records and omitted actions execute printing the original records **(Note: Omitted patterns and omitted actions all is ok)**. In the example above, there are two special patterns `BEGIN{ mode = ...}` supply startup actions and `END{print ...}` supply cleanup actions **(Note: Two special patterns -- BEGIN pattern and END pattern)**. Both execute without any conditions. Apart from the omitted pattern and the special patterns, how about the common patterns? _Awk_ use patterns as following:
+Each record of `/etc/passwd` or `/etc/shadow` matches against the the specific patterns, if the value of pattern matching expression is nonzero or non-null string, namely the equivalent of boolean true in _AWK_, the followed actions will execute on this record **(Note: Processing -- Actions execute on pattern matched records )**. In _AWK_, either of pattern and actions (but not both) may be omitted. Omitted pattern match all records and omitted actions execute printing the original records **(Note: Omitted patterns and omitted actions all is ok)**. In the example above, there are two special patterns `BEGIN{ mode = ...}` supply startup actions and `END{print ...}` supply cleanup actions **(Note: Two special patterns -- BEGIN pattern and END pattern)**. Both execute without any conditions. Apart from the omitted pattern and the special patterns, how about the common patterns? _AWK_ use patterns as following:
 
 1. /Regular expression/
 2. Common expression
 3. Pattern paris specifies input and output record match
 
-Comprehensive pattern `/^_?[l-z]+/ &&  $3 % 2 == 0 && mode == "normal" || mode == "debug"` is an always pass through without pattern verify if variable `mode` is assigned "debug". While "normal" mode, valid records are regular expression `/^_?[l-z]+/` matched, and built-in variable `$3` is even number. Not only logical operators, arithmetic operators and comparison operators work in _Awk_, most C-style operators are supported (sorted by priority from higher to lower, bold items are not C-style operators):
+Comprehensive pattern `/^_?[l-z]+/ &&  $3 % 2 == 0 && mode == "normal" || mode == "debug"` is an always pass through without pattern verify if variable `mode` is assigned "debug". While "normal" mode, valid records are regular expression `/^_?[l-z]+/` matched, and built-in variable `$3` is even number. Not only logical operators, arithmetic operators and comparison operators work in _AWK_, most C-style operators are supported (sorted by priority from higher to lower, bold items are not C-style operators):
 
 Operators		|Meaning			|Priority	| Direction
 :-------------:	|:----------------:	|:--------:	|:------------:
@@ -85,7 +85,7 @@ x++ (unary)		| Post-increment	| 3			| ← right
 **>> (following a command)** | File append redirection | 9 | left →
 **<span>&#124</span> (following a command)**	| Program redirection     | 9 | left →
 **~**			| Regular-match sign	| 10	| left →
-**!~**			| Regular-unmatch sign	| 10	| left →
+**!~**			| Regular-mismatch sign	| 10	| left →
 **in**			| Array membership	| 11		| iteration
 && 				| Logical "and"		| 12		| left →
 <span>&#124;&#124;</span> | Logical "or" | 13	| left →
@@ -97,32 +97,34 @@ x++ (unary)		| Post-increment	| 3			| ← right
 
 ### FIELDS:
 
-You may be confused by `$3`. It is a built-variable refers to a field of record. In _Awk_, `$0` refers to the entire record, `$1 ~ $n` refer to fields from the 1st to the nth field which is separated by space or `tab` character by default **(Note: Field reference -- $0 and $1 ~ $n)**. In our case, separate symbol is specified as `":"` through `awk -F ':'`, alternative specifying method is:
+You may be confused by `$3`. It is a built-variable refers to a field of record. In _AWK_, `$0` refers to the entire record, `$1 ~ $n` refer to fields from the 1st to the nth field which is separated by space or `tab` character by default **(Note: Field reference -- $0 and $1 ~ $n)**. In our case, separate symbol is specified as `":"` through `awk -F ':'`, alternative specifying method is:
 
 	awk 'BEGIN{FS=":"}...`
-	
+
+The number of a field has no requirement for variables or constant. `"$"` is used to evaluate any value which is number convertible to specify fields, e.g., `$(2^2) equal to $4`. Not only the value is readable, it is also writable. _AWK_ never modify the contents of input, the rewritten contents could be use in the looping rules processing.
+
 Should be pointed out that, when executing the `BEGIN pattern`, there are no available field references.
 
 ### BUILT-IN VARIABLES:
 
-We have known built-in variables `$0` and `$1 ~ $n`. In our case above some special characters symbol `FS`, `RS`, `OFS`, `ORS`, `ENVIRON`, `ARGV`, `ARGC`, `NR`, `FNR` and `FILENAME` are also built-in variables. Where are the others? A Summary of _Awk_ built-in variables is as the following table, bold items mean checkable/useable values while program running:
+We have known built-in variables `$0` and `$1 ~ $n`. In our case above some special characters symbol `FS`, `RS`, `OFS`, `ORS`, `ENVIRON`, `ARGV`, `ARGC`, `NR`, `FNR` and `FILENAME` are also built-in variables. Where are the others? A Summary of _AWK_ built-in variables is as the following table, bold items mean checkable/useable values while program running:
 
 Built-in Variables	|Meaning 
 :-----------------:	|:-----------------:
 **$0**				| Entire record
 **$n**				| The nth record field
 FS 					| Field separator, default: `space` or `tab` 
-RS					| Input record separator, default: `line break -- \n`
+RS					| Input record separator, default: `new line character -- \n`
 OFS					| Output field separator, default: `":"`
-ORS					| Output record separator, default: `line break`
-CONVFMT				| A string that controls the conversion of numbers to strings, the default value is %.6g
+ORS					| Output record separator, default: `new line character`
+CONVFMT				| Format specifier for converting numbers to strings, default: `"%.6g"`
 OFMT				| Early version of `CONVFMT`
 SUBSEP				| Subscript separator, default: `"\034"`
 **NF**				| Number of fields in the current reading record
 **NR**				| Number of input records has processed
 **ARGC**			| Number of arguments
 **ARGV**			| Arguments
-**FILENAME**		| Filename
+**FILENAME**		| File's name
 **FNR**				| Current record number
 **RSTART**			| Start-index of the substring that is matched by the `match` function
 **RLENGTH**			| Length of the substring that is matched by the `match` function
@@ -144,7 +146,7 @@ Actions set is required to be wrapped by curly braces, and consisted of series s
 	// Pattern matching
 	IF `mode` equal "normal":
 		IF record match regular expression `/^_?[t-z]+/` and the numeric user id(`$3`) is even:
-			PRINT information include total number of records have been scanned(`NR`), number of records have been scanned for current scanning file(`FNR`), specified fields(`$3`, `$1`, `$6`) of matched record and current scanning file's name(`FILENAME`)
+			PRINT information include total number of records have been scanned(`NR`), number of records have been scanned for current scanning file(`FNR`), specific fields(`$3`, `$1`, `$6`) of matched record and current scanning file's name(`FILENAME`)
 	ELSE IF `mode` equal "debug":
 		PRINT information about all records
 	ELSE
@@ -152,7 +154,7 @@ Actions set is required to be wrapped by curly braces, and consisted of series s
 	// Cleanup actions
 	PRINT process completion prompt with total number of records and fields
 			
-In the `printf statement`, two points should be mentioned:
+In the `printf statement`, three points should be mentioned:
 
 1. Program employ ARGV[1] which refers to the first argument of file input fileds -- "/etc/passwd", and ARGV[2] which refers to the second argument -- "/etc/shadow"( Meanwhile, ARGV[0] refers to program's name -- "awk", easy to know, ARGV[n] refers to the nth argument) cos `FILENAME` is unavailable in `BEGIN patten`. Alternative choice is declaring a variable through command option `"-v"`:
 
@@ -164,13 +166,13 @@ In the `printf statement`, two points should be mentioned:
 
 		awk 'program' filename1 var=1 filename2 
 
-	Assigning value to variable like above is functionally similar with using command option `-v`, but it occurs when _Awk_ start processing the assignment.
+	Assigning value to variable like above is functionally similar with using command option `-v`, but it occurs when _AWK_ start processing the assignment.
 
-3. Add "\n" manually at the end of `printf statement` for line break is necessary(`print` insert line break character at the end of statement automatically) **(Note: printf produce output strictly follow formatting structure & print produce output with line break)**. Actually `print` and `printf` have many difference with each other, we simply conclude `print` is a fancy, handy and no strictly formatting requirement replacement of `printf`.
+3. Add "\n" manually at the end of `printf statement` for line break is necessary(`print` insert line break character at the end of statement automatically) **(Note: printf produce output strictly follow formatting structure & print produce output with line break)**. Actually `print` and `printf` have many difference with each other, we simply conclude `print` is a fancy, handy and no strictly formatting requirement replacement of `printf`. 
 
-Another thing should be noted: Variable `field_count` is called without any declaration, with program working fine, it is easy to speculate `field_count` is assigned with initial value 0 while its first calling **(Note: non-declaration value is auto initialized as 0 while first calling)**.
+**Another thing should be noted**: Variable `field_count` is called without declaration, with program working fine, it is easy to speculate `field_count` is assigned with initial value 0 while its first calling **(Note: non-declaration value is auto initialized as 0 while first calling)**.
 
-We have seen many statements in above example, as a supplement, here list all types of statements supported by _Awk_ --
+We have seen many statements in above example, as a supplement, here list all types of statements supported by _AWK_ --
 
 1. Expressions, which can call functions or assign values to variables.
 2. Control statements:
@@ -188,12 +190,12 @@ We have seen many statements in above example, as a supplement, here list all ty
 	* `printf`
 6. Deletion statements 
 
-Oh, I see more expansion for _Awk_, before that, let me end this section --
+Oh, I see more expansion for _AWK_, before that, let me end this section --
 
 Finally, what an ideal program output should look like? Compare your results with below.
 
 ```
-Terminal: /bin/bash
+Shell: /bin/bash
 Count from files /etc/passwd and /etc/shadow(total 2 files)
 [Count Test Start]
 11-> 11-> 	10	uucp		/var/spool/uucp	[/etc/passwd] !;
