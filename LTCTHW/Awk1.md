@@ -83,7 +83,7 @@ x++ (unary)		| Post-increment	| 3			| ← right
 <=				| Not-greater-than sign		| 9 | left →
 **> (following a command)**	| File write redirection  | 9 | left →
 **>> (following a command)** | File append redirection | 9 | left →
-**<span>&#124</span> (following a command)**	| Program redirection     | 9 | left →
+**<&#124; (following a command)**	| Program redirection     | 9 | left →
 **~**			| Regular-match sign	| 10	| left →
 **!~**			| Regular-mismatch sign	| 10	| left →
 **in**			| Array membership	| 11		| iteration
